@@ -1,0 +1,125 @@
+﻿@model Warehouse.Infrastructure.ViewModels.Suppliers.IndexViewModel
+
+@{
+    ViewData["Title"] = "Index";
+    var defaultSupplier = Model.Suppliers.FirstOrDefault();
+}
+
+<h1 class="display-2">Suppliers</h1>
+
+<p>
+    @if (User.IsInRole(Warehouse.Areas.Identity.Roles.Admin))
+    {
+        <a class="btn btn-dark" asp-action="Create">CREATE NEW</a>
+    }
+</p>
+
+<form method="get" class="form-inline">
+    <label>Name:</label>
+    <input name="selectedName" value="@Model.FilterViewModel.SelectedName" class="form-control col-2 m-1" />
+
+    <label>Product type:</label>
+    <select name="selectedProductTypeId" asp-items="Model.FilterViewModel.ProductTypes" class="form-control col-1 m-1"></select>
+
+    <label>Delivery:</label>
+    <select name="selectedDeliveryMethodId" asp-items="Model.FilterViewModel.DeliveryMethods" class="form-control col-1 m-1"></select>
+
+    <input type="hidden" name="isFromFilter" value="true" />
+    <input type="submit" value="Filter" class="btn btn-outline-dark col-3 m-1" />
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index"
+                   asp-route-sort="@Model.SortViewModel.NameSort"
+                   asp-route-selectedName="@Model.FilterViewModel.SelectedName"
+                   asp-route-selectedProductTypeId="@Model.FilterViewModel.SelectedProductTypeId"
+                   asp-route-selectedDeliveryMethodId="@Model.FilterViewModel.SelectedDeliveryMethodId">
+                    @Html.DisplayNameFor(model => defaultSupplier.Name)
+                </a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => defaultSupplier.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => defaultSupplier.Phone)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Suppliers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    <a class="btn btn-dark" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    @if (User.IsInRole(Warehouse.Areas.Identity.Roles.Admin))
+                    {
+                        <a class="btn btn-dark" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-dark" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="d-flex align-items-center justify-content-center">
+
+    @if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="1"
+           asp-route-sort="@Model.SortViewModel.Current"
+           asp-route-selectedName="@Model.FilterViewModel.SelectedName"
+           asp-route-selectedProductTypeId="@Model.FilterViewModel.SelectedProductTypeId"
+           asp-route-selectedDeliveryMethodId="@Model.FilterViewModel.SelectedDeliveryMethodId"
+           class="btn btn-outline-dark m-1">
+            First page
+        </a>
+
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+           asp-route-sort="@Model.SortViewModel.Current"
+           asp-route-selectedName="@Model.FilterViewModel.SelectedName"
+           asp-route-selectedProductTypeId="@Model.FilterViewModel.SelectedProductTypeId"
+           asp-route-selectedDeliveryMethodId="@Model.FilterViewModel.SelectedDeliveryMethodId"
+           class="btn btn-outline-dark m-1">
+            Previous page
+        </a>
+    }
+    <a class="btn btn-outline-dark m-1">
+        @Model.PageViewModel.PageNumber
+    </a>
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+           asp-route-sort="@Model.SortViewModel.Current"
+           asp-route-selectedName="@Model.FilterViewModel.SelectedName"
+           asp-route-selectedProductTypeId="@Model.FilterViewModel.SelectedProductTypeId"
+           asp-route-selectedDeliveryMethodId="@Model.FilterViewModel.SelectedDeliveryMethodId"
+           class="btn btn-outline-dark m-1">
+            Next page
+        </a>
+
+        <a asp-action="Index"
+           asp-route-page="@Model.PageViewModel.TotalPages"
+           asp-route-sort="@Model.SortViewModel.Current"
+           asp-route-selectedName="@Model.FilterViewModel.SelectedName"
+           asp-route-selectedProductTypeId="@Model.FilterViewModel.SelectedProductTypeId"
+           asp-route-selectedDeliveryMethodId="@Model.FilterViewModel.SelectedDeliveryMethodId"
+           class="btn btn-outline-dark m-1">
+            Last page (@Model.PageViewModel.TotalPages)
+        </a>
+    }
+</div>
